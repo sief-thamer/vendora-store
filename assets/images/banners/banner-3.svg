@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 600" width="1600" height="600" role="img">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B2A4A"/><stop offset="1" stop-color="#0B192C"/></linearGradient></defs>
+<rect width="1600" height="600" fill="url(#bg)"/>
+<circle cx="1380" cy="120" r="260" fill="#FFFFFF" opacity="0.06"/>
+<circle cx="180" cy="520" r="220" fill="#D4AF37" opacity="0.10"/>
+<circle cx="1280" cy="470" r="150" fill="none" stroke="#D4AF37" stroke-width="3" opacity="0.25"/>
+<text x="800" y="250" text-anchor="middle" font-family="Cairo, Segoe UI, Tahoma, sans-serif" font-size="86" font-weight="700" fill="#F5F0E8">شحن سريع ودفع عند الاستلام</text>
+<text x="800" y="340" text-anchor="middle" font-family="Cairo, Segoe UI, Tahoma, sans-serif" font-size="40" fill="#D8C3A5">تسوّق بثقة مع ضمان الجودة وسهولة الإرجاع</text>
+<text x="800" y="430" text-anchor="middle" font-family="Montserrat, Segoe UI, sans-serif" font-size="30" letter-spacing="3" fill="#D4AF37">FAST DELIVERY & CASH ON DELIVERY</text>
+</svg>

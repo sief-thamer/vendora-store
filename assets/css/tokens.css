@@ -1,0 +1,201 @@
+/* ============================================================
+   VENDORA | فيندورا — Design Tokens & Base
+   ============================================================ */
+
+/* ---- Fonts (local, offline) ---- */
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/cairo-arabic-400.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200D, U+2010-2011, U+204F, U+2E41;
+}
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/cairo-arabic-600.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200D, U+2010-2011, U+204F, U+2E41;
+}
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/cairo-arabic-700.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200D, U+2010-2011, U+204F, U+2E41;
+}
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/cairo-latin-400.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/cairo-latin-600.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/cairo-latin-700.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 400; font-display: swap; src: url('../fonts/montserrat-latin-400.woff2') format('woff2'); }
+@font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 600; font-display: swap; src: url('../fonts/montserrat-latin-600.woff2') format('woff2'); }
+@font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 700; font-display: swap; src: url('../fonts/montserrat-latin-700.woff2') format('woff2'); }
+
+/* ---- Tokens ---- */
+:root {
+  /* Brand — premium navy + gold (from brand mark + rashof) */
+  --navy: #050F2C;
+  --navy-700: #0A1A3A;
+  --navy-600: #16294F;
+  --navy-500: #253D6B;
+  --gold: #DFB266;
+  --gold-dark: #C69A45;
+  --gold-soft: #F3E1BC;
+  --beige: #E9DCC2;
+  --ivory: #F8F6F1;
+  --green: #0F6B43;
+  --green-600: #168A57;
+
+  /* Semantic — warm, easy on the eyes */
+  --bg: #F7F5F0;
+  --bg-soft: #FCFBF8;
+  --surface: #FFFFFF;
+  --surface-2: #F4F1EA;
+  --surface-3: #ECE7DC;
+  --text: #131A2A;
+  --text-soft: #4A5265;
+  --text-muted: #818B9E;
+  --border: #EAE4D8;
+  --border-strong: #D8CEBB;
+  --primary: var(--navy);
+  --accent: var(--gold);
+  --accent-2: var(--gold-dark);
+  --success: var(--green);
+  --danger: #B3261E;
+  --danger-soft: #FDECEA;
+  --warning: #B26A00;
+  --info: #0C4A6E;
+
+  /* Layout */
+  --container: 1300px;
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 26px;
+  --radius-pill: 999px;
+
+  /* Spacing scale */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px;
+  --s6: 32px; --s7: 48px; --s8: 64px; --s9: 96px;
+
+  /* Shadow — soft, navy-tinted */
+  --shadow-sm: 0 1px 2px rgba(5,15,44,.05), 0 1px 3px rgba(5,15,44,.04);
+  --shadow: 0 12px 32px -14px rgba(5,15,44,.24);
+  --shadow-lg: 0 28px 64px -22px rgba(5,15,44,.30);
+  --ring: 0 0 0 3px rgba(223,178,102,.42);
+  --gold-grad: linear-gradient(135deg, #EAC888 0%, #DFB266 45%, #C69A45 100%);
+
+  /* Typography */
+  --font-ar: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+  --font-en: 'Montserrat', 'Cairo', 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Mono', 'Consolas', 'Courier New', monospace;
+  --font: var(--font-ar);
+
+  --header-h: 76px;
+  --nav-h: 48px;
+  --topbar-h: 38px;
+
+  --transition: 200ms cubic-bezier(.2,.7,.3,1);
+}
+
+html[data-lang="en"] { --font: var(--font-en); }
+
+[data-theme="dark"] {
+  --bg: #060D1F;
+  --bg-soft: #0A1428;
+  --surface: #0C1730;
+  --surface-2: #122043;
+  --surface-3: #182A52;
+  --text: #EDE8DE;
+  --text-soft: #C4CBDA;
+  --text-muted: #93A0B4;
+  --border: #1E2F52;
+  --border-strong: #2E4370;
+  --ivory: #060D1F;
+  --primary: #DFB266;
+  --shadow: 0 12px 32px -14px rgba(0,0,0,.5);
+  --shadow-lg: 0 28px 64px -22px rgba(0,0,0,.6);
+}
+
+/* ---- Reset ---- */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  font-size: 16px;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img, svg, video { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { background: none; border: 0; cursor: pointer; }
+ul, ol { list-style: none; }
+table { border-collapse: collapse; width: 100%; }
+h1, h2, h3, h4 { line-height: 1.25; font-weight: 700; }
+h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+h2 { font-size: clamp(1.4rem, 3vw, 1.9rem); }
+h3 { font-size: 1.2rem; }
+:focus-visible { outline: none; box-shadow: var(--ring); border-radius: var(--radius-sm); }
+::selection { background: var(--gold); color: var(--navy); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-track { background: var(--surface-2); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; border: 3px solid var(--surface-2); }
+::-webkit-scrollbar-thumb:hover { background: var(--gold-dark); }
+
+/* Directional helpers */
+[dir="rtl"] { text-align: right; }
+[dir="ltr"] { text-align: left; }
+html[data-lang="en"] body { font-family: var(--font-en); }
+
+/* Utilities */
+.container { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--s4); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.hidden { display: none !important; }
+.text-center { text-align: center; }
+.muted { color: var(--text-muted); }
+.soft { color: var(--text-soft); }
+.nowrap { white-space: nowrap; }
+.row { display: flex; align-items: center; gap: var(--s3); }
+.row-between { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); }
+.wrap { flex-wrap: wrap; }
+.grow { flex: 1 1 auto; }
+.stack { display: flex; flex-direction: column; gap: var(--s3); }
+.grid { display: grid; gap: var(--s5); }
+.mt-0{margin-top:0}.mt-2{margin-top:var(--s2)}.mt-3{margin-top:var(--s3)}.mt-4{margin-top:var(--s4)}.mt-5{margin-top:var(--s5)}.mt-6{margin-top:var(--s6)}
+.mb-2{margin-bottom:var(--s2)}.mb-3{margin-bottom:var(--s3)}.mb-4{margin-bottom:var(--s4)}.mb-5{margin-bottom:var(--s5)}.mb-6{margin-bottom:var(--s6)}
+
+/* Motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+}

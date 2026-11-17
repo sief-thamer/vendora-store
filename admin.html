@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="VENDORA | فيندورا — لوحة الإدارة (Admin Console).">
+  <meta name="theme-color" content="#0B192C">
+  <meta name="robots" content="noindex, nofollow">
+  <title>لوحة الإدارة | VENDORA Admin</title>
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/app.css">
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body class="admin-body">
+  <div id="admin-root"></div>
+  <div id="toast-host" class="toast-host"></div>
+  <div id="modal-host" class="modal-host" hidden></div>
+
+  <!-- Core -->
+  <script src="assets/js/core/core.js"></script>
+  <script src="assets/js/core/i18n.js"></script>
+
+  <!-- Data layer -->
+  <script src="assets/js/data/db.js"></script>
+  <script src="assets/js/data/markets.js"></script>
+  <script src="assets/js/data/categories.js"></script>
+  <script src="assets/js/data/brands.js"></script>
+  <script src="assets/js/data/seed-profiles.js"></script>
+  <script src="assets/js/data/seed.js"></script>
+
+  <!-- Services -->
+  <script src="assets/js/services/catalog.js"></script>
+  <script src="assets/js/services/cart.js"></script>
+  <script src="assets/js/services/orders.js"></script>
+  <script src="assets/js/services/inventory.js"></script>
+  <script src="assets/js/services/payments.js"></script>
+  <script src="assets/js/services/notifications.js"></script>
+  <script src="assets/js/services/account.js"></script>
+  <script src="assets/js/services/admin.js"></script>
+
+  <!-- Components -->
+  <script src="assets/js/components/ui.js"></script>
+
+  <!-- Admin pages -->
+  <script src="assets/js/pages/admin/shell.js"></script>
+  <script src="assets/js/pages/admin/dashboard.js"></script>
+  <script src="assets/js/pages/admin/catalog-admin.js"></script>
+  <script src="assets/js/pages/admin/sales-admin.js"></script>
+  <script src="assets/js/pages/admin/marketing-admin.js"></script>
+  <script src="assets/js/pages/admin/system-admin.js"></script>
+
+  <!-- App -->
+  <script src="assets/js/admin-app.js"></script>
+</body>
+</html>

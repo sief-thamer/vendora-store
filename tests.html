@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>اختبارات النظام | VENDORA Tests</title>
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/app.css">
+  <style>
+    .t-wrap { max-width: 1080px; margin: 0 auto; padding: var(--s8) var(--s4); }
+    .t-head { display: flex; flex-wrap: wrap; gap: var(--s4); align-items: center; justify-content: space-between; margin-bottom: var(--s6); }
+    .t-sum { display: flex; gap: var(--s2); flex-wrap: wrap; }
+    .t-pill { padding: 6px 14px; border-radius: 999px; font-weight: 700; font-size: .85rem; border: 1px solid var(--border); }
+    .t-pill.pass { background: rgba(10,92,54,.12); color: var(--green); border-color: rgba(10,92,54,.3); }
+    .t-pill.fail { background: rgba(179,38,30,.12); color: #b3261e; border-color: rgba(179,38,30,.35); }
+    .t-pill.run { background: rgba(212,175,55,.16); color: var(--gold-deep, #9b7c1e); border-color: rgba(212,175,55,.4); }
+    .t-group { margin-bottom: var(--s6); }
+    .t-group h3 { font-size: 1.05rem; margin: 0 0 var(--s3); color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 6px; display: inline-block; }
+    .t-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; background: var(--surface, #fff); }
+    .t-dot { width: 12px; height: 12px; border-radius: 50%; margin-top: 5px; flex: none; background: #cbb; }
+    .t-row.pass .t-dot { background: var(--green); }
+    .t-row.fail .t-dot { background: #b3261e; }
+    .t-row.skip .t-dot { background: #9aa; }
+    .t-name { flex: 1; font-weight: 600; font-size: .92rem; }
+    .t-detail { color: var(--muted, #667); font-size: .8rem; margin-top: 2px; font-weight: 500; }
+    .t-badge { font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+    .t-row.pass .t-badge { background: rgba(10,92,54,.12); color: var(--green); }
+    .t-row.fail .t-badge { background: rgba(179,38,30,.12); color: #b3261e; }
+    .t-badge.skip { background: #eef; color: #556; }
+    .t-note { font-size: .82rem; color: var(--muted, #667); }
+  </style>
+</head>
+<body>
+  <div class="t-wrap">
+    <div class="t-head">
+      <div>
+        <h1 style="margin:0;font-size:1.5rem;color:var(--navy);">اختبارات النظام | VENDORA Test Suite</h1>
+        <div class="t-note">اختبارات آلية للبنية والبيانات والخدمات (بدون خادم).</div>
+      </div>
+      <div style="display:flex;gap:var(--s4);align-items:center;">
+        <div class="t-sum" id="test-summary"></div>
+        <button class="btn btn-gold" id="run-tests" type="button">إعادة التشغيل</button>
+      </div>
+    </div>
+    <div id="test-list"></div>
+  </div>
+
+  <!-- Core -->
+  <script src="assets/js/core/core.js"></script>
+  <script src="assets/js/core/i18n.js"></script>
+
+  <!-- Data layer -->
+  <script src="assets/js/data/db.js"></script>
+  <script src="assets/js/data/markets.js"></script>
+  <script src="assets/js/data/categories.js"></script>
+  <script src="assets/js/data/brands.js"></script>
+  <script src="assets/js/data/seed-profiles.js"></script>
+  <script src="assets/js/data/seed.js"></script>
+
+  <!-- Services -->
+  <script src="assets/js/services/catalog.js"></script>
+  <script src="assets/js/services/cart.js"></script>
+  <script src="assets/js/services/orders.js"></script>
+  <script src="assets/js/services/inventory.js"></script>
+  <script src="assets/js/services/payments.js"></script>
+  <script src="assets/js/services/notifications.js"></script>
+  <script src="assets/js/services/account.js"></script>
+  <script src="assets/js/services/admin.js"></script>
+
+  <!-- Components (no auto-run) -->
+  <script src="assets/js/components/ui.js"></script>
+
+  <!-- Test runner -->
+  <script>
+  (function () {
+    'use strict';
+    var V = window.V;
+
+    function assert(cond, msg) { if (!cond) throw new Error(msg || 'assertion failed'); }
+    function eq(a, b, msg) { if (a !== b) throw new Error((msg || 'not equal') + ' — got ' + JSON.stringify(a) + ', expected ' + JSON.stringify(b)); }
+    function near(a, b, tol, msg) { if (Math.abs(a - b) > (tol || 0.01)) throw new Error((msg || 'not near') + ' — ' + a + ' vs ' + b); }
+
+    var TEST_CUSTOMER = { email: 'qa.tests@vendora.local', password: 'qa123456', name: 'QA Tester', phone: '777000000' };
+
+    var SUITE = [
+      { group: 'Core / Environment', tests: [
+        ['V object exists', function () { assert(typeof V === 'object' && V, 'V missing'); }],
+        ['db API complete', function () {
+          ['get','getAll','count','getAllByIndex','getOneByIndex','put','add','del','clear','bulkPut','bulkAdd','metaGet','metaSet','nextSeq'].forEach(function (m) { assert(typeof V.db[m] === 'function', 'db.' + m); });
+        }],
+        ['utils present', function () { assert(typeof V.utils.formatDate === 'function' && typeof V.utils.formatNumber === 'function'); }],
+        ['formatDate returns text', function () { var s = V.utils.formatDate(Date.now(), 'ar', true); assert(typeof s === 'string' && s.length > 0, 'empty'); }],
+        ['formatNumber returns text', function () { var s = V.utils.formatNumber(1234.5, 'ar'); assert(typeof s === 'string' && s.length > 0, 'empty'); }],
+        ['markets count = 7', function () { eq((V.markets || []).length, 7, 'markets'); }],
+        ['getMarket(YE) valid', function () { var m = V.getMarket('YE'); assert(m && m.currency === 'YER' && typeof m.taxRate === 'number' && typeof m.shippingFlat === 'number', 'market fields'); }]
+      ]},
+
+      { group: 'i18n / Icons', tests: [
+        ['DICT non-empty', function () { assert(Object.keys(V.DICT || {}).length > 100, 'dict small'); }],
+        ['every DICT key has ar + en', function () {
+          var bad = []; Object.keys(V.DICT).forEach(function (k) { var e = V.DICT[k]; if (!e || typeof e.ar !== 'string' || !e.ar || typeof e.en !== 'string' || !e.en) bad.push(k); });
+          assert(bad.length === 0, 'incomplete: ' + bad.slice(0, 8).join(', '));
+        }],
+        ['ICONS count >= 80', function () { assert(Object.keys(V.ICONS || {}).length >= 80, 'only ' + Object.keys(V.ICONS || {}).length); }],
+        ['t() resolves known key', function () { assert(V.t('appName') === 'فيندورا' || V.t('appName') === 'VENDORA', 'got ' + V.t('appName')); }],
+        ['t() falls back to key', function () { eq(V.t('__nope__'), '__nope__'); }],
+        ['order status labels present', function () { ['st_PENDING','st_CONFIRMED','st_DELIVERED','st_CANCELLED','st_RETURNED'].forEach(function (k) { assert(V.DICT[k], 'missing ' + k); }); }]
+      ]},
+
+      { group: 'Data / Seed', tests: [
+        ['ensure() resolves', function () { return V.seed.ensure().then(function (r) { assert(r, 'no result'); }); }],
+        ['catalog loads', function () { return V.catalog.load().then(function () { assert(V.catalog.products().length > 0, 'empty'); }); }],
+        ['products >= 500', function () { assert(V.catalog.products().length >= 500, 'got ' + V.catalog.products().length); }],
+        ['categories = 8', function () { eq(V.catalog.categories().length, 8, 'categories'); }],
+        ['brands = 32', function () { eq(V.catalog.brands().length, 32, 'brands'); }],
+        ['product has prices for 7 markets', function () {
+          var p = V.catalog.products()[0]; ['YE','SA','AE','KW','QA','BH','OM'].forEach(function (c) { assert(typeof p.prices[c] === 'number', 'missing ' + c); });
+        }],
+        ['slug pattern', function () { var p = V.catalog.products()[0]; assert(/^[a-z0-9-]+-\d{3}$/.test(p.slug), 'slug ' + p.slug); }],
+        ['get by slug === get by id', function () { var p = V.catalog.products()[0]; assert(V.catalog.get(p.slug) === V.catalog.get(p.id), 'mismatch'); }],
+        ['stockOf numeric', function () { assert(typeof V.catalog.stockOf(V.catalog.products()[0]) === 'number'); }]
+      ]},
+
+      { group: 'Cart & Coupons', tests: [
+        ['cart clears', function () { return V.cart.clear().then(function () { eq(V.cart.count(), 0); }); }],
+        ['add increments count', function () {
+          var p = V.catalog.products()[0];
+          return V.cart.add(p.id, 2).then(function () { assert(V.cart.count() >= 2, 'count ' + V.cart.count()); });
+        }],
+        ['totals math consistent', function () {
+          var t = V.cart.totals({ market: 'YE' });
+          assert(t.subtotal > 0, 'subtotal');
+          near(t.total, t.subtotal - t.discount + t.shipping + t.tax, 0.02, 'total');
+        }],
+        ['coupon WELCOME10 valid', function () {
+          var t = V.cart.totals({ market: 'YE' });
+          return V.coupons.validate('WELCOME10', 'YE', t.subtotal, null).then(function (r) { assert(r.ok && r.coupon && r.coupon.type === 'percent', 'invalid'); });
+        }],
+        ['coupon applies discount', function () {
+          var t = V.cart.totals({ market: 'YE' });
+          return V.coupons.validate('WELCOME10', 'YE', t.subtotal, null).then(function (r) {
+            var t2 = V.cart.totals({ market: 'YE', coupon: r.coupon });
+            assert(t2.discount > 0, 'no discount'); near(t2.total, t2.subtotal - t2.discount + t2.shipping + t2.tax, 0.02, 'total');
+          });
+        }],
+        ['bad coupon rejected', function () { return V.coupons.validate('NOPE-404', 'YE', 99999, null).then(function (r) { assert(!r.ok, 'should fail'); }); }]
+      ]},
+
+      { group: 'Orders lifecycle', tests: [
+        ['place order (PENDING, stock held)', function () {
+          var p = V.catalog.products().filter(function (x) { return V.catalog.stockOf(x) > 5; })[0];
+          this_pid = p.id; this_before = V.catalog.stockOf(p);
+          return V.cart.clear().then(function () { return V.cart.add(p.id, 1); }).then(function () {
+            return V.orders.place({ name: 'QA', email: 'qa@vendora.local', phone: '777000000', city: 'صنعاء', market: 'YE' });
+          }).then(function (o) {
+            assert(o.id && /^VEN-/.test(o.number), 'number ' + o.number);
+            eq(o.status, 'PENDING');
+            eq(o.reservationStatus, 'temporary', 'not held');
+            eq(V.catalog.stockOf(V.catalog.get(p.id)), this_before - 1, 'stock not held at checkout');
+            this_order = o;
+          });
+        }],
+        ['CONFIRM commits the held stock', function () {
+          return V.orders.updateStatus(this_order.id, 'CONFIRMED').then(function (o) {
+            eq(o.status, 'CONFIRMED');
+            return V.orders.get(this_order.id).then(function (fresh) {
+              eq(fresh.reservationStatus, 'confirmed', 'reservation not committed');
+              eq(V.catalog.stockOf(V.catalog.get(this_pid)), this_before - 1, 'available wrong after commit');
+            });
+          });
+        }],
+        ['invalid transitions rejected', function () {
+          assert(!V.orders.canTransition('CONFIRMED', 'CONFIRMED'), 'self-transition allowed');
+          assert(!V.orders.canTransition('PENDING', 'DELIVERED'), 'PENDING->DELIVERED allowed');
+          return V.orders.updateStatus(this_order.id, 'DELIVERED').catch(function () { return true; }).then(function (r) { assert(r === true, 'invalid transition not blocked'); });
+        }],
+        ['double CONFIRM is idempotent', function () {
+          return V.orders.updateStatus(this_order.id, 'CONFIRMED').then(function (o) {
+            eq(o.status, 'CONFIRMED'); eq(V.catalog.stockOf(V.catalog.get(this_pid)), this_before - 1, 'stock deducted twice');
+          });
+        }],
+        ['CANCEL releases stock', function () {
+          return V.orders.updateStatus(this_order.id, 'CANCELLED').then(function (o) {
+            eq(o.status, 'CANCELLED'); eq(V.catalog.stockOf(V.catalog.get(this_pid)), this_before, 'stock not released');
+          });
+        }],
+        ['cleanup test order', function () {
+          var oid = this_order.id;
+          return V.db.getAllByIndex('orderEvents', 'orderId', oid).then(function (evs) {
+            return Promise.all(evs.map(function (e) { return V.db.del('orderEvents', e.id); }));
+          }).then(function () { return V.db.getAllByIndex('reservations', 'orderId', oid); })
+            .then(function (rs) { return Promise.all(rs.map(function (r) { return V.db.del('reservations', r.id); })); })
+            .then(function () { return V.db.getAllByIndex('payments', 'orderId', oid); })
+            .then(function (ps) { return Promise.all(ps.map(function (p) { return V.db.del('payments', p.id); })); })
+            .then(function () { return V.db.del('orders', oid); }).then(function () { return V.cart.clear(); });
+        }]
+      ]},
+
+      { group: 'Roles & Permissions', tests: [
+        ['8 roles defined', function () { eq(Object.keys(V.roles || {}).length, 8, 'roles'); }],
+        ['admin has wildcard', function () { assert(V.perms.can('role_admin', 'orders.edit') && V.perms.can('role_admin', 'products.edit'), 'admin lacks perms'); }],
+        ['products role cannot edit orders', function () { assert(!V.perms.can('role_products', 'orders.edit'), 'should be denied'); }],
+        ['products role can edit products', function () { assert(V.perms.can('role_products', 'products.edit'), 'should be allowed'); }],
+        ['staff login sets staff type', function () {
+          return V.account.staffLogin('admin', 'admin123').then(function () {
+            var u = V.state.get('user'); assert(u && u.type === 'staff' && u.role === 'role_admin', 'session wrong'); return V.account.logout();
+          });
+        }],
+        ['products login role correct', function () {
+          return V.account.staffLogin('products', 'products123').then(function () {
+            var u = V.state.get('user'); assert(u && u.role === 'role_products', 'role wrong'); return V.account.logout();
+          });
+        }]
+      ]},
+
+      { group: 'Admin services', tests: [
+        ['productsAdmin.list >= 500', function () { return V.productsAdmin.list().then(function (a) { assert(a.length >= 500, 'got ' + a.length); }); }],
+        ['taxonomy categories = 8', function () { return V.taxonomyAdmin.categories.list().then(function (a) { eq(a.length, 8); }); }],
+        ['taxonomy brands = 32', function () { return V.taxonomyAdmin.brands.list().then(function (a) { eq(a.length, 32); }); }],
+        ['reports.dashboard shape', function () { return V.reports.dashboard().then(function (d) { assert(d && typeof d === 'object', 'not object'); }); }],
+        ['settings.get object', function () { return V.settings.get().then(function (s) { assert(s && typeof s === 'object'); }); }],
+        ['audit.list array', function () { return V.audit.list().then(function (a) { assert(Array.isArray(a)); }); }]
+      ]},
+
+      { group: 'Router & Account', tests: [
+        ['router API present', function () {
+          assert(V.router && typeof V.router.add === 'function' && typeof V.router.start === 'function' && typeof V.router.navigate === 'function' && typeof V.router.routes === 'object', 'router api');
+        }],
+        ['register + verify + login customer', function () {
+          return V.db.getOneByIndex('customers', 'email', TEST_CUSTOMER.email).then(function (c) { return c ? V.db.del('customers', c.id) : null; })
+            .then(function () { return V.account.register({ name: TEST_CUSTOMER.name, email: TEST_CUSTOMER.email, password: TEST_CUSTOMER.password, confirmPassword: TEST_CUSTOMER.password, phone: TEST_CUSTOMER.phone }); })
+            .then(function (r) {
+              if (r && r.pendingVerification) { eq(r.verifyRequired, true, 'verification not required'); assert(/^\d{6}$/.test(r.devCode), 'no code'); return V.account.verifyEmail(r.email, r.devCode); }
+              return V.account.login(TEST_CUSTOMER.email, TEST_CUSTOMER.password);
+            })
+            .then(function () { var u = V.state.get('user'); assert(u && u.email === TEST_CUSTOMER.email, 'login failed'); return V.orders; })
+            .then(function () { return V.account.logout(); })
+            .then(function () { return V.db.getOneByIndex('customers', 'email', TEST_CUSTOMER.email); })
+            .then(function (c) { return c ? V.db.del('customers', c.id) : null; });
+        }]
+      ]},
+
+      { group: 'Verification & reset', tests: [
+        ['verify rejects a wrong code', function () {
+          var email = 'qa.verify@vendora.local';
+          return V.db.getOneByIndex('customers', 'email', email).then(function (c) { return c ? V.db.del('customers', c.id) : null; })
+            .then(function () { return V.account.register({ name: 'V', email: email, password: 'qabc1234', confirmPassword: 'qabc1234' }); })
+            .then(function () { return V.account.verifyEmail(email, '000000').then(function () { throw new Error('accepted bad code'); }, function (e) { return String(e.message); }); })
+            .then(function (msg) { eq(msg, 'invalidCode'); return V.db.getOneByIndex('customers', 'email', email); })
+            .then(function (c) { return c ? V.db.del('customers', c.id) : null; });
+        }],
+        ['reset password with a valid code', function () {
+          var email = 'qa.reset@vendora.local';
+          return V.db.getOneByIndex('customers', 'email', email).then(function (c) { return c ? V.db.del('customers', c.id) : null; })
+            .then(function () { return V.account.register({ name: 'R', email: email, password: 'qabc1234', confirmPassword: 'qabc1234' }); })
+            .then(function (r) { if (r && r.pendingVerification) return V.account.verifyEmail(email, r.devCode); })
+            .then(function () { return V.account.logout(); })
+            .then(function () { return V.account.requestReset(email); })
+            .then(function (r) { return V.account.resetPassword(email, r.devCode, 'newpass99'); })
+            .then(function () { return V.account.login(email, 'newpass99'); })
+            .then(function () { var u = V.state.get('user'); assert(u && u.email === email, 'reset login failed'); return V.account.logout(); })
+            .then(function () { return V.db.getOneByIndex('customers', 'email', email); })
+            .then(function (c) { return c ? V.db.del('customers', c.id) : null; });
+        }],
+        ['stock alert de-duplicates per e-mail', function () {
+          var p = V.catalog.products()[0];
+          return V.stock.addAlert({ productId: p.id, email: 'alert@vendora.local', market: 'YE' }).then(function () {
+            return V.stock.addAlert({ productId: p.id, email: 'alert@vendora.local', market: 'YE' });
+          }).then(function (r) { eq(r.duplicate, true, 'duplicate not blocked'); });
+        }],
+        ['payment methods available', function () {
+          return V.payments.methods('YE').then(function (m) { assert(m.length >= 3, 'methods ' + m.length); assert(m.some(function (x) { return x.code === 'cod'; }), 'no cod'); });
+        }],
+        ['refund needs manager role', function () {
+          return V.payments.requestRefund('ord_missing', { amount: 5, reason: 'test' }).then(function (rf) {
+            return V.payments.decideRefund(rf.id, true).then(function () { throw new Error('non-manager approved'); }, function (e) { eq(String(e.message), 'manager_only'); });
+          });
+        }]
+      ]}
+    ];
+
+    var this_pid, this_before, this_order;
+
+    function render(results, final) {
+      var list = document.getElementById('test-list');
+      var html = '';
+      var passed = 0, failed = 0;
+      results.forEach(function (g) {
+        html += '<div class="t-group"><h3>' + g.group + '</h3>';
+        g.tests.forEach(function (t) {
+          var cls = t.status === 'pass' ? 'pass' : (t.status === 'skip' ? 'skip' : 'fail');
+          if (t.status === 'pass') passed++; else if (t.status === 'fail') failed++;
+          html += '<div class="t-row ' + cls + '"><span class="t-dot"></span><div class="t-name">' + t.name +
+            (t.detail ? '<div class="t-detail">' + t.detail + '</div>' : '') +
+            '</div><span class="t-badge ' + cls + '">' + (t.status === 'pass' ? 'PASS' : t.status === 'skip' ? 'SKIP' : 'FAIL') + '</span></div>';
+        });
+        html += '</div>';
+      });
+      list.innerHTML = html;
+      document.getElementById('test-summary').innerHTML =
+        '<span class="t-pill run">' + (passed + failed) + ' tests</span>' +
+        '<span class="t-pill pass">' + passed + ' passed</span>' +
+        (failed ? '<span class="t-pill fail">' + failed + ' failed</span>' : '');
+      window.__TESTS = { done: !!final, passed: passed, failed: failed, total: passed + failed, results: results };
+      return { passed: passed, failed: failed };
+    }
+
+    function run() {
+      var results = SUITE.map(function (g) { return { group: g.group, tests: g.tests.map(function (t) { return { name: t[0], status: 'skip', detail: '' }; }) }; });
+      var chain = Promise.resolve();
+      SUITE.forEach(function (g, gi) {
+        g.tests.forEach(function (t, ti) {
+          chain = chain.then(function () {
+            var p;
+            try { p = t[1](); } catch (e) { results[gi].tests[ti].status = 'fail'; results[gi].tests[ti].detail = String(e.message || e); return; }
+            return Promise.resolve(p).then(function () {
+              results[gi].tests[ti].status = 'pass';
+            }).catch(function (e) {
+              results[gi].tests[ti].status = 'fail';
+              results[gi].tests[ti].detail = String((e && e.message) || e || 'error');
+            });
+          });
+        });
+      });
+      return chain.then(function () {
+        var r = render(results, true);
+        try { console.log('TESTS_DONE passed=' + r.passed + ' failed=' + r.failed); } catch (e) {}
+        return r;
+      });
+    }
+
+    window.__runTests = run;
+
+    function boot() {
+      render(SUITE.map(function (g) { return { group: g.group, tests: g.tests.map(function (t) { return { name: t[0], status: 'skip', detail: '…' }; }) }; }), false);
+      window.__TESTS = { done: false, passed: 0, failed: 0, total: 0, results: [] };
+      document.getElementById('test-summary').innerHTML = '<span class="t-pill run">running…</span>';
+      run();
+    }
+    document.getElementById('run-tests').addEventListener('click', function () { boot(); });
+    if (document.readyState === 'complete') boot(); else window.addEventListener('load', boot);
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "appName": "VENDORA",
+  "appNameAr": "فيندورا",
+  "categories": [
+    { "slug": "electronics", "ar": "إلكترونيات وتقنية", "en": "Electronics", "c1": "#0B192C", "c2": "#1E3A5F", "icon": "electronics" },
+    { "slug": "fashion", "ar": "أزياء وملابس", "en": "Fashion", "c1": "#7A1F3D", "c2": "#B23A5B", "icon": "fashion" },
+    { "slug": "perfume", "ar": "عطور وجمال", "en": "Perfume & Beauty", "c1": "#3B2A4A", "c2": "#6B4E7A", "icon": "perfume" },
+    { "slug": "home", "ar": "منزل ومطبخ", "en": "Home & Kitchen", "c1": "#0A5C36", "c2": "#12855A", "icon": "home" },
+    { "slug": "furniture", "ar": "أثاث وديكور", "en": "Furniture", "c1": "#6B4A2B", "c2": "#9A6B3F", "icon": "furniture" },
+    { "slug": "sports", "ar": "رياضة وأنشطة", "en": "Sports", "c1": "#0C4A6E", "c2": "#0E7490", "icon": "sports" },
+    { "slug": "stationery", "ar": "كتب وقرطاسية", "en": "Books & Stationery", "c1": "#5A3E1B", "c2": "#8A6A33", "icon": "stationery" },
+    { "slug": "kids", "ar": "أطفال وألعاب", "en": "Kids & Toys", "c1": "#7C2D12", "c2": "#C2410C", "icon": "kids" }
+  ],
+  "banners": [
+    { "n": 1, "ar": "كل ما تحب، في مكان واحد", "en": "Everything you love, in one place", "subAr": "عروض حصرية على آلاف المنتجات", "subEn": "Exclusive deals on thousands of products", "c1": "#0B192C", "c2": "#0A5C36" },
+    { "n": 2, "ar": "تخفيضات الموسم", "en": "Season Sale", "subAr": "خصومات تصل إلى ٥٠٪ على الفئات المختارة", "subEn": "Up to 50% off selected categories", "c1": "#5A3E1B", "c2": "#D4AF37" },
+    { "n": 3, "ar": "شحن سريع ودفع عند الاستلام", "en": "Fast delivery & Cash on Delivery", "subAr": "تسوّق بثقة مع ضمان الجودة وسهولة الإرجاع", "subEn": "Shop with confidence, easy returns", "c1": "#3B2A4A", "c2": "#0B192C" }
+  ]
+}
